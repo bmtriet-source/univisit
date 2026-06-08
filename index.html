@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>English Campus Tour Guide - Google API Free</title>
+    <title>English Campus Tour Guide - Webkit Speech</title>
     <style>
         :root {
             --primary-color: #2b6cb0;
@@ -155,11 +155,12 @@
 
         .voice-btn:active {
             background-color: var(--primary-hover);
+            transform: scale(0.98);
         }
 
-        .recording-active {
-            background-color: #e53e3e !important;
-            animation: pulse 1.5s infinite;
+        .voice-btn:disabled {
+            background-color: #cbd5e0;
+            box-shadow: none;
         }
 
         .restart-btn {
@@ -181,6 +182,12 @@
             width: 100%;
         }
 
+        .status-active {
+            color: var(--accent-color);
+            font-weight: 600;
+            animation: pulse 1.5s infinite;
+        }
+
         .status-success { color: var(--success-color); font-weight: 600; }
         .status-error { color: #e53e3e; font-weight: 600; }
 
@@ -193,9 +200,9 @@
         .transcript-text { font-weight: bold; color: #e53e3e; }
 
         @keyframes pulse {
-            0% { opacity: 0.8; }
+            0% { opacity: 0.6; }
             50% { opacity: 1; }
-            100% { opacity: 0.8; }
+            100% { opacity: 0.6; }
         }
     </style>
 </head>
@@ -204,7 +211,7 @@
 <div class="app-container">
     <header>
         <h1>🎙️ Campus Tour Guide</h1>
-        <p>Kết nối trực tiếp qua Google API Free</p>
+        <p>Luyện nói tiếng Anh tương tác rẽ nhánh</p>
     </header>
     
     <div class="media-container">
@@ -213,47 +220,69 @@
 
     <div class="character-bubble">
         <div class="character-name">David (Visitor)</div>
-        <div id="story" class="story-text">David: "Hi there! Thanks for meeting me. Wow, the weather in Vietnam is so hot today, I'm super thirsty. Can we get something to drink first?"</div>
+        <div id="story" class="story-text">...</div>
     </div>
 
     <div class="interaction-panel" id="interaction-box">
-        <p>🔊 Nhấn GIỮ nút đỏ để nói, THẢ ra để gửi Google API:</p>
+        <p>🔊 Nhấn nút dưới rồi đọc TO câu gợi ý:</p>
         <div id="options-list">
-            <div class="option-line">👉 <strong>Let's go to the cafeteria</strong></div>
-            <div class="option-line">👉 <strong>Let's go to the convenience store</strong></div>
-        </div>
+            </div>
     </div>
 
     <div class="controls">
-        <button id="start-btn" class="voice-btn">🎤 Bấm để thu âm (Click to Record)</button>
+        <button id="start-btn" class="voice-btn">
+            <span id="btn-icon">🎙️</span> <span id="btn-text">Bắt đầu nói (Chạm để nói)</span>
+        </button>
         <button class="restart-btn" onclick="resetGame()">Chơi lại từ đầu</button>
     </div>
     
     <div class="status-box">
-        <div id="status-text">Sẵn sàng. Hãy cấp quyền Micro khi được hỏi.</div>
-        <div class="transcript-zone">Google nhận diện được: <span id="transcript-text" class="transcript-text">...</span></div>
+        <div id="status-text">Sẵn sàng. Hãy cấp quyền truy cập Micro khi được hỏi.</div>
+        <div class="transcript-zone">Hệ thống nghe được: <span id="transcript-text" class="transcript-text">...</span></div>
     </div>
 </div>
 
 <script>
+    // Cơ sở dữ liệu kịch bản và đường dẫn ảnh local trên GitHub
     const scriptTree = {
         'start': {
             text: 'David: "Hi there! Thanks for meeting me. Wow, the weather in Vietnam is so hot today, I\'m super thirsty. Can we get something to drink first?"',
             img: 'cong_dh.jpg',
-            keywords: { 'cafeteria': 'cafeteria_scene', 'convenience': 'store_scene', 'store': 'store_scene' },
-            options: ["Let's go to the cafeteria", "Let's go to the convenience store"]
+            keywords: {
+                'cafeteria': 'cafeteria_scene',
+                'convenience': 'store_scene',
+                'store': 'store_scene'
+            },
+            options: [
+                "Let's go to the cafeteria",
+                "Let's go to the convenience store"
+            ]
         },
         'cafeteria_scene': {
             text: 'David: "Ah, the cafeteria is so lively! This traditional Vietnamese iced milk coffee (Cà phê sữa đá) looks amazing. Let me try it... Wow, it is strong and delicious! I feel refreshed now. Where should we go next?"',
             img: 'cang_tin.jpg',
-            keywords: { 'library': 'library_scene', 'mushroom': 'mushroom_scene', 'farm': 'mushroom_scene' },
-            options: ["We can go to the library now", "We can go to the mushroom farm"]
+            keywords: {
+                'library': 'library_scene',
+                'mushroom': 'mushroom_scene',
+                'farm': 'mushroom_scene'
+            },
+            options: [
+                "We can go to the library now",
+                "We can go to the mushroom farm"
+            ]
         },
         'store_scene': {
             text: 'David: "Great, this convenience store has good air conditioning! I will grab a bottle of cold water. Ah, that feels much better! I\'m ready to continue the tour. What\'s next on the list?"',
             img: 'cua_hang.jpg',
-            keywords: { 'library': 'library_scene', 'mushroom': 'mushroom_scene', 'farm': 'mushroom_scene' },
-            options: ["Let's go to the library next", "Let's go to the mushroom farm next"]
+            keywords: {
+                'library': 'library_scene',
+                'mushroom': 'mushroom_scene',
+                'farm': 'mushroom_scene'
+            },
+            options: [
+                "Let's go to the library next",
+                "Let's go to the mushroom farm next"
+            ]
         },
         'library_scene': {
             text: 'David: "Shh... we need to be quiet, right? Wow, this library is so big and modern. There are so many students studying hard here. Thank you for this wonderful campus tour!" 📚🎉',
@@ -270,11 +299,23 @@
     };
 
     let currentStage = 'start';
-    let mediaRecorder;
-    let audioChunks = [];
-    let isRecording = false;
+
+    // Gọi chính xác API webkitSpeechRecognition tích hợp trong nhân trình duyệt
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+
+    if (!SpeechRecognition) {
+        alert("Thiết bị này cần mở bằng Google Chrome (Android) hoặc Safari (iPhone) để dùng chức năng nhận diện giọng nói!");
+    } else {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US'; // Chế độ nhận diện Tiếng Anh chuẩn
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+    }
 
     const startBtn = document.getElementById('start-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnIcon = document.getElementById('btn-icon');
     const statusText = document.getElementById('status-text');
     const transcriptText = document.getElementById('transcript-text');
     const sceneryImg = document.getElementById('scenery-img');
@@ -282,93 +323,71 @@
     const optionsList = document.getElementById('options-list');
     const interactionBox = document.getElementById('interaction-box');
 
-    // Thiết lập hệ thống ghi âm trực tiếp của điện thoại
-    navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-            mediaRecorder = new MediaRecorder(stream);
-            
-            mediaRecorder.ondataavailable = event => {
-                audioChunks.push(event.data);
-            };
-
-            mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                sendToGoogleFreeAPI(audioBlob); // Gửi trực tiếp file lên Google API ẩn
-            };
-        }).catch(err => {
-            statusText.innerText = "Lỗi: Không truy cập được Microphone! " + err;
+    // Cấu hình các sự kiện cho bộ nhận diện Webkit Speech
+    if (recognition) {
+        startBtn.addEventListener('click', () => {
+            try {
+                recognition.start();
+            } catch(e) {
+                console.log("Hệ thống nhận diện đang hoạt động.");
+            }
         });
 
-    // Xử lý bấm/thả hoặc chạm trên điện thoại
-    startBtn.addEventListener('click', () => {
-        if (!isRecording) {
-            // Bắt đầu thu âm
-            audioChunks = [];
-            mediaRecorder.start();
-            isRecording = true;
-            startBtn.innerText = "🛑 Đang thu âm... Bấm lại để Gửi";
-            startBtn.classList.add('recording-active');
-            statusText.innerText = "🎤 Đang ghi âm giọng nói của bạn...";
-        } else {
-            // Dừng và gửi
-            mediaRecorder.stop();
-            isRecording = false;
-            startBtn.innerText = "🎤 Bấm để thu âm (Click to Record)";
-            startBtn.classList.remove('recording-active');
-            statusText.innerText = "⚡ Đang gửi dữ liệu lên Google API Free...";
-        }
-    });
+        // Trạng thái khi mic bắt đầu thu âm
+        recognition.onstart = () => {
+            statusText.className = "status-active";
+            statusText.innerText = "🎙️ Đang nghe... Hãy đọc to câu thoại gợi ý bằng tiếng Anh.";
+            btnText.innerText = "Hệ thống đang lắng nghe...";
+            btnIcon.innerText = "🛑";
+            startBtn.disabled = true;
+        };
 
-    // Hàm gọi thẳng tới API Free nhận diện giọng nói của Google
-    async function sendToGoogleFreeAPI(blob) {
-        try {
-            // Sử dụng Endpoint cổng dịch vụ ẩn của Google Speech
-            const url = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang=en-US";
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'audio/webm; codec=audio/webm' },
-                body: blob
-            });
+        // Khi người học ngừng nói
+        recognition.onspeechend = () => {
+            recognition.stop();
+            startBtn.disabled = false;
+            btnText.innerText = "Bắt đầu nói (Chạm để nói)";
+            btnIcon.innerText = "🎙️";
+        };
 
-            const data = await response.json();
+        // Xử lý chuỗi văn bản sau khi mic nhận diện thành công
+        recognition.onresult = (event) => {
+            const resultText = event.results[0][0].transcript.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
+            transcriptText.innerText = `"${event.results[0][0].transcript}"`;
             
-            if (data.hypotheses && data.hypotheses.length > 0) {
-                const resultText = data.hypotheses[0].utterance.toLowerCase();
-                transcriptText.innerText = `"${resultText}"`;
-                checkRouting(resultText);
+            let isMatched = false;
+            const currentKeywords = scriptTree[currentStage].keywords;
+
+            // Thuật toán quét so khớp từ khóa cốt lõi (Tăng độ chính xác trên thiết bị di động)
+            for (let key in currentKeywords) {
+                if (resultText.includes(key)) {
+                    currentStage = currentKeywords[key];
+                    updateApplicationState();
+                    isMatched = true;
+                    break;
+                }
+            }
+
+            if (isMatched) {
+                statusText.className = "status-success";
+                statusText.innerText = "✅ Nhận diện chính xác! Đã tự động đổi cảnh ảnh.";
             } else {
                 statusText.className = "status-error";
-                statusText.innerText = "❌ Google không nghe rõ cụm từ. Hãy thử lại!";
+                statusText.innerText = "❌ Chưa khớp câu thoại gợi ý. Bạn hãy đọc lại rõ ràng hơn nhé!";
             }
-        } catch (error) {
+        };
+
+        // Báo lỗi thiết bị đầu vào (Micro bị chặn hoặc ngắt kết nối giữa chừng)
+        recognition.onerror = (event) => {
+            startBtn.disabled = false;
+            btnText.innerText = "Bắt đầu nói (Chạm để nói)";
+            btnIcon.innerText = "🎙️";
             statusText.className = "status-error";
-            statusText.innerText = "Lỗi kết nối mạng hoặc API giới hạn: " + error;
-        }
+            statusText.innerText = "Lỗi kết nối Micro: " + event.error;
+        };
     }
 
-    function checkRouting(text) {
-        let isMatched = false;
-        const currentKeywords = scriptTree[currentStage].keywords;
-
-        for (let key in currentKeywords) {
-            if (text.includes(key)) {
-                currentStage = currentKeywords[key];
-                updateApplicationState();
-                isMatched = true;
-                break;
-            }
-        }
-
-        if (isMatched) {
-            statusText.className = "status-success";
-            statusText.innerText = "✅ Google API xác nhận đúng! Đã chuyển cảnh.";
-        } else {
-            statusText.className = "";
-            statusText.innerText = "❌ Sai từ khóa chỉ đường rồi. Hãy đọc lại gợi ý.";
-        }
-    }
-
+    // Hàm cập nhật giao diện hiển thị hình ảnh và câu thoại gợi ý tương ứng từng màn
     function updateApplicationState() {
         const stage = scriptTree[currentStage];
         storyText.innerText = stage.text;
@@ -386,21 +405,27 @@
                 optionsList.appendChild(div);
             });
         } else {
-            interactionBox.innerHTML = `<p style="color: var(--success-color); text-align:center; margin-bottom:0;">🎉 Bạn đã kết thúc chuyến dẫn tour xuất sắc!</p>`;
+            // Trường hợp kết thúc màn chơi (Endings)
+            interactionBox.innerHTML = `<p style="color: var(--success-color); text-align:center; margin-bottom:0; font-weight:bold;">🎉 Bạn đã kết thúc chuyến dẫn tour xuất sắc!</p>`;
             startBtn.style.display = 'none';
             statusText.className = "status-success";
             statusText.innerText = "Chuyến tham quan kết thúc.";
         }
     }
 
+    // Thiết lập tính năng chơi lại từ đầu (Reset)
     function resetGame() {
         currentStage = 'start';
         transcriptText.innerText = "...";
         statusText.className = "";
         statusText.innerText = "Sẵn sàng. Nhấn nút để kích hoạt microphone.";
-        interactionBox.innerHTML = `<p>🔊 Nhấn nút dưới rồi đọc TO 1 trong các câu:</p><div id="options-list"></div>`;
         updateApplicationState();
     }
+
+    // Đảm bảo dữ liệu hiển thị NGAY LẬP TỨC khi màn hình vừa tải xong
+    window.addEventListener('DOMContentLoaded', () => {
+        updateApplicationState();
+    });
 </script>
 
 </body>
