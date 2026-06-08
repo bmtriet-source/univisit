@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Campus Tour Guide - Interactive App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>English Campus Tour Guide - Google API Free</title>
     <style>
         :root {
             --primary-color: #2b6cb0;
@@ -20,108 +20,105 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
-            padding: 20px;
+            padding: 12px;
         }
 
         .app-container {
             background: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            max-width: 700px;
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            max-width: 500px;
             width: 100%;
             text-align: center;
             border: 1px solid #e2e8f0;
+            margin-top: 10px;
         }
 
         header h1 {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             color: var(--primary-color);
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         header p {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .media-container {
-            position: relative;
             width: 100%;
-            height: 380px;
+            height: 220px;
             background-color: #edf2f7;
-            border-radius: 14px;
+            border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 25px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 12px;
         }
 
         img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: opacity 0.3s ease;
         }
 
         .character-bubble {
             background: #ebf8ff;
-            border-left: 5px solid var(--primary-color);
-            padding: 20px;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px;
             border-radius: 8px;
             text-align: left;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            margin-bottom: 12px;
         }
 
         .character-name {
             font-weight: bold;
             color: var(--primary-color);
-            margin-bottom: 5px;
-            font-size: 0.9rem;
+            margin-bottom: 4px;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .story-text {
-            font-size: 1.15rem;
-            line-height: 1.6;
-            color: var(--text-main);
+            font-size: 1rem;
+            line-height: 1.4;
             font-style: italic;
         }
 
         .interaction-panel {
             background: #fffaf0;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 14px;
+            border-radius: 10px;
             text-align: left;
-            margin-bottom: 25px;
+            margin-bottom: 16px;
             border: 1px dashed #feebc8;
         }
 
         .interaction-panel p {
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             color: #dd6b20;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .option-line {
-            margin: 10px 0;
-            font-size: 1.1rem;
+            margin: 8px 0;
+            font-size: 0.95rem;
             color: #4a5568;
             padding-left: 15px;
             position: relative;
+            line-height: 1.3;
         }
 
         .option-line::before {
@@ -136,94 +133,69 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .voice-btn {
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 1.1rem;
-            border-radius: 50px;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.05rem;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 4px 6px rgba(43, 108, 176, 0.2);
-            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(43, 108, 176, 0.15);
             display: inline-flex;
+            justify-content: center;
             align-items: center;
-            gap: 10px;
-        }
-
-        .voice-btn:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 12px rgba(43, 108, 176, 0.3);
+            gap: 8px;
         }
 
         .voice-btn:active {
-            transform: translateY(1px);
+            background-color: var(--primary-hover);
         }
 
-        .voice-btn:disabled {
-            background-color: #cbd5e0;
-            box-shadow: none;
-            cursor: not-allowed;
+        .recording-active {
+            background-color: #e53e3e !important;
+            animation: pulse 1.5s infinite;
         }
 
         .restart-btn {
             background-color: transparent;
             color: var(--text-muted);
             border: 1px solid #e2e8f0;
-            padding: 8px 20px;
-            font-size: 0.9rem;
+            padding: 8px 16px;
+            font-size: 0.85rem;
             border-radius: 20px;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 5px;
-        }
-
-        .restart-btn:hover {
-            background-color: #edf2f7;
-            color: var(--text-main);
         }
 
         .status-box {
-            margin-top: 15px;
+            margin-top: 12px;
             padding: 10px;
             border-radius: 8px;
-            font-size: 0.95rem;
-            width: 100%;
+            font-size: 0.85rem;
             background: #f7fafc;
+            width: 100%;
         }
 
-        .status-active {
-            color: var(--accent-color);
-            font-weight: 600;
-            animation: pulse 1.5s infinite;
-        }
-
-        .status-success {
-            color: var(--success-color);
-            font-weight: 600;
-        }
+        .status-success { color: var(--success-color); font-weight: 600; }
+        .status-error { color: #e53e3e; font-weight: 600; }
 
         .transcript-zone {
-            margin-top: 10px;
-            font-size: 0.95rem;
+            margin-top: 6px;
+            font-size: 0.85rem;
             color: var(--text-muted);
         }
 
-        .transcript-text {
-            font-weight: bold;
-            color: #e53e3e;
-            font-size: 1.05rem;
-        }
+        .transcript-text { font-weight: bold; color: #e53e3e; }
 
         @keyframes pulse {
-            0% { opacity: 0.6; }
+            0% { opacity: 0.8; }
             50% { opacity: 1; }
-            100% { opacity: 0.6; }
+            100% { opacity: 0.8; }
         }
     </style>
 </head>
@@ -232,124 +204,77 @@
 <div class="app-container">
     <header>
         <h1>🎙️ Campus Tour Guide</h1>
-        <p>Luyện phản xạ giao tiếp tiếng Anh qua nhập vai tương tác</p>
+        <p>Kết nối trực tiếp qua Google API Free</p>
     </header>
     
-    <!-- Khung hiển thị ảnh cục bộ lưu trên GitHub -->
     <div class="media-container">
-        <img id="scenery-img" src="cong_dh.jpg" alt="Campus Scenery">
+        <img id="scenery-img" src="cong_dh.jpg" alt="Campus">
     </div>
 
-    <!-- Lời nói của David -->
     <div class="character-bubble">
-        <div class="character-name" id="char-name">David (Visitor)</div>
-        <div id="story" class="story-text">Loading game...</div>
+        <div class="character-name">David (Visitor)</div>
+        <div id="story" class="story-text">David: "Hi there! Thanks for meeting me. Wow, the weather in Vietnam is so hot today, I'm super thirsty. Can we get something to drink first?"</div>
     </div>
 
-    <!-- Gợi ý thoại cho người học luyện nói -->
     <div class="interaction-panel" id="interaction-box">
-        <p>🔊 Hãy nhấn nút bấm bên dưới rồi đọc to một trong các câu thoại sau:</p>
+        <p>🔊 Nhấn GIỮ nút đỏ để nói, THẢ ra để gửi Google API:</p>
         <div id="options-list">
-            <!-- Tùy chọn sẽ tự động render bằng JavaScript -->
+            <div class="option-line">👉 <strong>Let's go to the cafeteria</strong></div>
+            <div class="option-line">👉 <strong>Let's go to the convenience store</strong></div>
         </div>
     </div>
 
-    <!-- Bộ điều khiển hành động -->
     <div class="controls">
-        <button id="start-btn" class="voice-btn">
-            <span id="btn-icon">🎙️</span> <span id="btn-text">Bắt đầu nói (Click to Speak)</span>
-        </button>
-        <button id="restart-btn" class="restart-btn" onclick="resetGame()">Chơi lại từ đầu</button>
+        <button id="start-btn" class="voice-btn">🎤 Bấm để thu âm (Click to Record)</button>
+        <button class="restart-btn" onclick="resetGame()">Chơi lại từ đầu</button>
     </div>
     
-    <!-- Trạng thái xử lý âm thanh -->
     <div class="status-box">
-        <div id="status-text">Sẵn sàng. Nhấn nút để kích hoạt microphone.</div>
-        <div class="transcript-zone">Hệ thống nghe được: <span id="transcript-text" class="transcript-text">...</span></div>
+        <div id="status-text">Sẵn sàng. Hãy cấp quyền Micro khi được hỏi.</div>
+        <div class="transcript-zone">Google nhận diện được: <span id="transcript-text" class="transcript-text">...</span></div>
     </div>
 </div>
 
 <script>
-    // Định nghĩa toàn bộ cây kịch bản tương tác sử dụng 5 tài nguyên ảnh nội bộ (local)
     const scriptTree = {
-        // MÀN 1: CỔNG TRƯỜNG (Ảnh: cong_dh.jpg)
         'start': {
-            text: 'David: "Hi there! Thanks for meeting me. Wow, the weather in Vietnam is so hot today, I'm super thirsty. Can we get something to drink first?"',
+            text: 'David: "Hi there! Thanks for meeting me. Wow, the weather in Vietnam is so hot today, I\'m super thirsty. Can we get something to drink first?"',
             img: 'cong_dh.jpg',
-            keywords: {
-                'go to the cafeteria': 'cafeteria_scene',
-                'go to the convenience store': 'store_scene'
-            },
-            options: [
-                'Let's go to the cafeteria',
-                'Let's go to the convenience store'
-            ]
+            keywords: { 'cafeteria': 'cafeteria_scene', 'convenience': 'store_scene', 'store': 'store_scene' },
+            options: ["Let's go to the cafeteria", "Let's go to the convenience store"]
         },
-
-        // MÀN 2A: CĂNG TIN (Ảnh: cang_tin.jpg)
         'cafeteria_scene': {
             text: 'David: "Ah, the cafeteria is so lively! This traditional Vietnamese iced milk coffee (Cà phê sữa đá) looks amazing. Let me try it... Wow, it is strong and delicious! I feel refreshed now. Where should we go next?"',
             img: 'cang_tin.jpg',
-            keywords: {
-                'go to the library': 'library_scene',
-                'go to the mushroom farm': 'mushroom_scene'
-            },
-            options: [
-                'We can go to the library now',
-                'We can go to the mushroom farm'
-            ]
+            keywords: { 'library': 'library_scene', 'mushroom': 'mushroom_scene', 'farm': 'mushroom_scene' },
+            options: ["We can go to the library now", "We can go to the mushroom farm"]
         },
-
-        // MÀN 2B: CỬA HÀNG TIỆN LỢI (Ảnh: cua_hang.png)
         'store_scene': {
-            text: 'David: "Great, this convenience store has good air conditioning! I will grab a bottle of cold water. Ah, that feels much better! I'm ready to continue the tour. What's next on the list?"',
-            img: 'cua_hang.png',
-            keywords: {
-                'go to the library': 'library_scene',
-                'go to the mushroom farm': 'mushroom_scene'
-            },
-            options: [
-                'Let's go to the library next',
-                'Let's go to the mushroom farm next'
-            ]
+            text: 'David: "Great, this convenience store has good air conditioning! I will grab a bottle of cold water. Ah, that feels much better! I\'m ready to continue the tour. What\'s next on the list?"',
+            img: 'cua_hang.jpg',
+            keywords: { 'library': 'library_scene', 'mushroom': 'mushroom_scene', 'farm': 'mushroom_scene' },
+            options: ["Let's go to the library next", "Let's go to the mushroom farm next"]
         },
-
-        // MÀN 3A: THƯ VIỆN - KẾT THÚC 1 (Ảnh: thu_vien.jpg)
         'library_scene': {
             text: 'David: "Shh... we need to be quiet, right? Wow, this library is so big and modern. There are so many students studying hard here. Thank you for this wonderful campus tour!" 📚🎉',
             img: 'thu_vien.jpg',
             keywords: {}, 
-            options: [] // Kết thúc không có options
+            options: []
         },
-
-        // MÀN 3B: KHU TRỒNG NẤM - KẾT THÚC 2 (Ảnh: khu_nam.jpg)
         'mushroom_scene': {
             text: 'David: "Unbelievable! A mushroom farm inside a university? Seeing how students grow these organic mushrooms is the coolest thing ever. This tour was full of surprises. Thanks a lot!" 🍄🎉',
             img: 'khu_nam.jpg',
             keywords: {}, 
-            options: [] // Kết thúc không có options
+            options: []
         }
     };
 
     let currentStage = 'start';
+    let mediaRecorder;
+    let audioChunks = [];
+    let isRecording = false;
 
-    // Khởi tạo Web Speech API (Hỗ trợ tốt nhất trên Google Chrome và Microsoft Edge)
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let recognition = null;
-
-    if (!SpeechRecognition) {
-        alert("Cảnh báo: Trình duyệt của bạn chưa hỗ trợ chức năng nhận diện giọng nói (Web Speech API). Vui lòng chạy ứng dụng này trên Google Chrome hoặc Microsoft Edge để trải nghiệm đầy đủ.");
-    } else {
-        recognition = new SpeechRecognition();
-        recognition.lang = 'en-US'; // Thiết lập ngôn ngữ đích nhận diện là tiếng Anh
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-    }
-
-    // Lấy các element giao diện
     const startBtn = document.getElementById('start-btn');
-    const btnText = document.getElementById('btn-text');
-    const btnIcon = document.getElementById('btn-icon');
     const statusText = document.getElementById('status-text');
     const transcriptText = document.getElementById('transcript-text');
     const sceneryImg = document.getElementById('scenery-img');
@@ -357,88 +282,97 @@
     const optionsList = document.getElementById('options-list');
     const interactionBox = document.getElementById('interaction-box');
 
-    // Xử lý sự kiện bấm nút ghi âm nói chuyện
-    if (recognition) {
-        startBtn.addEventListener('click', () => {
-            try {
-                recognition.start();
-            } catch (e) {
-                console.log("Speech recognition đã chạy sẵn hoặc lỗi khởi tạo: ", e);
-            }
+    // Thiết lập hệ thống ghi âm trực tiếp của điện thoại
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            mediaRecorder = new MediaRecorder(stream);
+            
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                sendToGoogleFreeAPI(audioBlob); // Gửi trực tiếp file lên Google API ẩn
+            };
+        }).catch(err => {
+            statusText.innerText = "Lỗi: Không truy cập được Microphone! " + err;
         });
 
-        // Khi bắt đầu bắt tín hiệu âm thanh
-        recognition.onstart = () => {
-            statusText.className = "status-active";
-            statusText.innerText = "🎙️ Đang nghe... Hãy nhìn gợi ý thoại và đọc to rõ ràng bằng tiếng Anh.";
-            btnText.innerText = "Hệ thống đang lắng nghe...";
-            btnIcon.innerText = "🛑";
-            startBtn.disabled = true;
-        };
+    // Xử lý bấm/thả hoặc chạm trên điện thoại
+    startBtn.addEventListener('click', () => {
+        if (!isRecording) {
+            // Bắt đầu thu âm
+            audioChunks = [];
+            mediaRecorder.start();
+            isRecording = true;
+            startBtn.innerText = "🛑 Đang thu âm... Bấm lại để Gửi";
+            startBtn.classList.add('recording-active');
+            statusText.innerText = "🎤 Đang ghi âm giọng nói của bạn...";
+        } else {
+            // Dừng và gửi
+            mediaRecorder.stop();
+            isRecording = false;
+            startBtn.innerText = "🎤 Bấm để thu âm (Click to Record)";
+            startBtn.classList.remove('recording-active');
+            statusText.innerText = "⚡ Đang gửi dữ liệu lên Google API Free...";
+        }
+    });
 
-        // Khi người dùng dừng nói hoặc kết thúc phiên nghe
-        recognition.onspeechend = () => {
-            recognition.stop();
-            startBtn.disabled = false;
-            btnText.innerText = "Bắt đầu nói (Click to Speak)";
-            btnIcon.innerText = "🎙️";
-        };
-
-        // Khi nhận kết quả chuyển đổi từ Google Speech Engine sang Text thành công
-        recognition.onresult = (event) => {
-            // Chuẩn hóa chuỗi văn bản thu được (viết thường, loại bỏ dấu câu cơ bản)
-            const resultText = event.results[0][0].transcript.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
-            transcriptText.innerText = `"${event.results[0][0].transcript}"`;
+    // Hàm gọi thẳng tới API Free nhận diện giọng nói của Google
+    async function sendToGoogleFreeAPI(blob) {
+        try {
+            // Sử dụng Endpoint cổng dịch vụ ẩn của Google Speech
+            const url = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang=en-US";
             
-            let isMatched = false;
-            const stageData = scriptTree[currentStage];
-            const currentKeywords = stageData.keywords;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'audio/webm; codec=audio/webm' },
+                body: blob
+            });
 
-            // Thuật toán quét so khớp từ khóa mờ (Fuzzy Keyword Matching)
-            for (let key in currentKeywords) {
-                if (resultText.includes(key)) {
-                    currentStage = currentKeywords[key];
-                    updateApplicationState();
-                    isMatched = true;
-                    break;
-                }
-            }
-
-            if (isMatched) {
-                statusText.className = "status-success";
-                statusText.innerText = "✅ Phát âm chính xác! Hệ thống đã tự động chuyển nhánh câu chuyện.";
-            } else {
-                statusText.className = "";
-                statusText.innerText = "❌ Chưa khớp từ khóa của nhánh nào. Gợi ý: Hãy đọc lại câu thoại chậm và rõ ràng hơn.";
-            }
-        };
-
-        // Xử lý khi xảy ra lỗi thiết bị đầu vào hoặc API dữ liệu
-        recognition.onerror = (event) => {
-            startBtn.disabled = false;
-            btnText.innerText = "Bắt đầu nói (Click to Speak)";
-            btnIcon.innerText = "🎙️";
-            statusText.className = "";
+            const data = await response.json();
             
-            if (event.error === 'no-speech') {
-                statusText.innerText = "❌ Hệ thống không nghe thấy tiếng nói. Vui lòng bấm lại nút và thử nói.";
-            } else if (event.error === 'not-allowed') {
-                statusText.innerText = "❌ Lỗi: Trình duyệt bị từ chối quyền truy cập Microphone (Xem cài đặt ổ khóa trên URL).";
+            if (data.hypotheses && data.hypotheses.length > 0) {
+                const resultText = data.hypotheses[0].utterance.toLowerCase();
+                transcriptText.innerText = `"${resultText}"`;
+                checkRouting(resultText);
             } else {
-                statusText.innerText = "Có lỗi xảy ra thiết bị: " + event.error;
+                statusText.className = "status-error";
+                statusText.innerText = "❌ Google không nghe rõ cụm từ. Hãy thử lại!";
             }
-        };
+        } catch (error) {
+            statusText.className = "status-error";
+            statusText.innerText = "Lỗi kết nối mạng hoặc API giới hạn: " + error;
+        }
     }
 
-    // Hàm cập nhật trạng thái trò chơi và render lại cấu trúc giao diện tương ứng
+    function checkRouting(text) {
+        let isMatched = false;
+        const currentKeywords = scriptTree[currentStage].keywords;
+
+        for (let key in currentKeywords) {
+            if (text.includes(key)) {
+                currentStage = currentKeywords[key];
+                updateApplicationState();
+                isMatched = true;
+                break;
+            }
+        }
+
+        if (isMatched) {
+            statusText.className = "status-success";
+            statusText.innerText = "✅ Google API xác nhận đúng! Đã chuyển cảnh.";
+        } else {
+            statusText.className = "";
+            statusText.innerText = "❌ Sai từ khóa chỉ đường rồi. Hãy đọc lại gợi ý.";
+        }
+    }
+
     function updateApplicationState() {
         const stage = scriptTree[currentStage];
-        
-        // Thay đổi nội dung hội thoại và nguồn ảnh (Local path trên repo github)
         storyText.innerText = stage.text;
         sceneryImg.src = stage.img;
-        
-        // Làm mới lại bảng danh sách tùy chọn gợi ý thoại
         optionsList.innerHTML = '';
         
         if (stage.options && stage.options.length > 0) {
@@ -452,59 +386,21 @@
                 optionsList.appendChild(div);
             });
         } else {
-            // Màn hình kết thúc (Endings) không còn nút bấm tương tác
-            interactionBox.innerHTML = `<p style="color: var(--success-color); text-align:center; font-size:1.1rem; margin-bottom:0;">🎉 Chúc mừng bạn đã hoàn thành xuất sắc vai trò Hướng dẫn viên du lịch (Campus Tour Guide)!</p>`;
+            interactionBox.innerHTML = `<p style="color: var(--success-color); text-align:center; margin-bottom:0;">🎉 Bạn đã kết thúc chuyến dẫn tour xuất sắc!</p>`;
             startBtn.style.display = 'none';
             statusText.className = "status-success";
-            statusText.innerText = "Trò chơi kết thúc.";
+            statusText.innerText = "Chuyến tham quan kết thúc.";
         }
     }
 
-    // Hàm khởi tạo lại toàn bộ dữ liệu ứng dụng
     function resetGame() {
         currentStage = 'start';
         transcriptText.innerText = "...";
         statusText.className = "";
         statusText.innerText = "Sẵn sàng. Nhấn nút để kích hoạt microphone.";
-        
-        // Khôi phục lại cấu trúc gốc của panel tương tác
-        interactionBox.innerHTML = `
-            <p>🔊 Hãy nhấn nút bấm bên dưới rồi đọc to một trong các câu thoại sau:</p>
-            <div id="options-list"></div>
-        `;
-        // Tái gán lại con trỏ dom của thẻ chứa option list mới sinh
-        setTimeout(() => {
-            const freshOptionsList = document.getElementById('options-list');
-            const stage = scriptTree['start'];
-            storyText.innerText = stage.text;
-            sceneryImg.src = stage.img;
-            startBtn.style.display = 'inline-flex';
-            startBtn.disabled = false;
-            
-            stage.options.forEach(option => {
-                const div = document.createElement('div');
-                div.className = 'option-line';
-                div.innerHTML = `👉 <strong>${option}</strong>`;
-                freshOptionsList.appendChild(div);
-            });
-        }, 50);
+        interactionBox.innerHTML = `<p>🔊 Nhấn nút dưới rồi đọc TO 1 trong các câu:</p><div id="options-list"></div>`;
+        updateApplicationState();
     }
-
-    // Chạy khởi tạo ứng dụng lần đầu khi tải xong tài nguyên trang web
-    window.addEventListener('DOMContentLoaded', () => {
-        // Tự động kích hoạt render dữ liệu cho màn start
-        const originalOptionsList = document.getElementById('options-list');
-        const stage = scriptTree['start'];
-        storyText.innerText = stage.text;
-        sceneryImg.src = stage.img;
-        
-        stage.options.forEach(option => {
-            const div = document.createElement('div');
-            div.className = 'option-line';
-            div.innerHTML = `👉 <strong>${option}</strong>`;
-            originalOptionsList.appendChild(div);
-        });
-    });
 </script>
 
 </body>
