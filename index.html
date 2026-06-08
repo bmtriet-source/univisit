@@ -211,7 +211,7 @@
 <div class="app-container">
     <header>
         <h1>🎙️ Campus Tour Guide</h1>
-        <p>Luyện nói tiếng Anh tương tác</p>
+        <p>Luyện nói tiếng Anh tương tác rẽ nhánh</p>
     </header>
     
     <div class="media-container">
@@ -307,7 +307,7 @@
     if (!SpeechRecognition) {
         alert("Thiết bị này cần mở bằng Google Chrome (Android) hoặc Safari (iPhone) để dùng chức năng nhận diện giọng nói!");
     } else {
-        recognition = new Recognition();
+        recognition = new SpeechRecognition();
         recognition.lang = 'en-US'; // Chế độ nhận diện Tiếng Anh chuẩn
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
@@ -420,27 +420,23 @@
         statusText.className = "";
         statusText.innerText = "Sẵn sàng. Nhấn nút để kích hoạt microphone.";
         updateApplicationState();
-        
-        // Phát lại file âm thanh khi nhấn Chơi lại
-        const audio = new Audio('david.wav');
-        audio.play().catch(e => console.log("Yêu cầu tương tác để phát nhạc"));
     }
 
-    // Đảm bảo dữ liệu hiển thị NGAY LẬP TỨC khi màn hình vừa tải xong và phát audio david.wav
+    // Đảm bảo dữ liệu hiển thị NGAY LẬP TỨC khi màn hình vừa tải xong
     window.addEventListener('DOMContentLoaded', () => {
         updateApplicationState();
 
-        // ĐOẠN CODE THÊM: Phát file âm thanh david.wav
-        const startAudio = new Audio('david.wav');
-        startAudio.play().catch(() => {
-            // Nếu trình duyệt mobile chặn tự động phát, nhạc sẽ phát ngay khi người dùng chạm vào màn hình lần đầu
-            const playOnGesture = () => {
-                startAudio.play();
-                document.removeEventListener('click', playOnGesture);
-                document.removeEventListener('touchstart', playOnGesture);
+        // THÊM CODE PHÁT AUDIO DAVID.WAV
+        const introAudio = new Audio('david.wav');
+        introAudio.play().catch(() => {
+            // Xử lý khi cơ chế bảo mật Autoplay của trình duyệt chặn âm thanh tự động phát
+            const playAudioOnInteraction = () => {
+                introAudio.play();
+                document.removeEventListener('click', playAudioOnInteraction);
+                document.removeEventListener('touchstart', playAudioOnInteraction);
             };
-            document.addEventListener('click', playOnGesture);
-            document.addEventListener('touchstart', playOnGesture);
+            document.addEventListener('click', playAudioOnInteraction);
+            document.addEventListener('touchstart', playAudioOnInteraction);
         });
     });
 </script>
